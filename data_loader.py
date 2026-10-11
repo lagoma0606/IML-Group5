@@ -2,7 +2,7 @@ from scipy.io import arff
 import pandas as pd
 from preprocessor import Preprocessor
 
-# Per-dataset configuration: columns where a 0 means 'not measured'.
+# Pre-dataset configuration: columns where a 0 means 'not measured'.
 # It lives here so main.py does not need to know anything about the
 # datasets themselves.
 ZERO_AS_MISSING = {
