@@ -22,6 +22,7 @@ so no additional partitioning is performed.
 │   └── mx/             20 .arff files
 ├── preprocessor.py     Preprocessor class: fit/transform
 ├── data_loader.py      Loads and prepares one fold
+├── voting.py           Voting schemes for the kNN (majority, inverse distance)
 ├── main.py             Experiment harness, writes results.csv
 │                       (holds the kNN placeholder for now)
 ├── analysis.py         Statistical analysis of results.csv
@@ -29,7 +30,8 @@ so no additional partitioning is performed.
 ```
 
 Each file has one responsibility: `data_loader.py` answers "where does the
-data come from", `main.py` answers "what experiments do I run with it", and
+data come from", `voting.py` answers "how do the K neighbours decide the
+class", `main.py` answers "what experiments do I run with it", and
 `analysis.py` answers "what do the results say". Generating results and
 analysing them are kept apart because `main.py` takes a long time to run
 while `analysis.py` reads the CSV in seconds.
