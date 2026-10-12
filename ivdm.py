@@ -118,7 +118,7 @@ class IVDM:
                 "probability": counts / counts.sum(),
             }
 
-        n_bins = self.n_bins_
+        n_bins = self.n_bins
         edges = np.linspace(minimum, maximum, n_bins + 1)
         width = (maximum - minimum) / n_bins
 
