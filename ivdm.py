@@ -215,6 +215,8 @@ class IVDM:
             # Squared L2 distance between class-probability vectors.
             distance += np.sum((p_x - p_y) ** 2)
 
+        return float(np.sqrt(distance))
+
     def transform(self, X):
             """Map each instance to the concatenation of its per-feature
             class-probability vectors.
@@ -235,4 +237,3 @@ class IVDM:
                 rows.append(np.concatenate(parts))
 
             return np.vstack(rows)
-            return float(np.sqrt(distance))
