@@ -15,7 +15,7 @@ def _minkowski_distance(x: np.ndarray, y: np.ndarray, r=1) -> float:
 
 def _clark_distance(x: np.ndarray, y: np.ndarray) -> float:
     """Calculate the Clark distance between two vectors."""
-    denominator = x + y
+    denominator = np.abs(x) + np.abs(y)
 
     # Avoid division by zero when both features are zero.
     mask = denominator != 0
@@ -30,7 +30,7 @@ def _clark_distance(x: np.ndarray, y: np.ndarray) -> float:
     )
 
 
-def _camberra_distance(x: np.ndarray, y: np.ndarray) -> float:
+def _canberra_distance(x: np.ndarray, y: np.ndarray) -> float:
     """Calculate the Canberra distance between two vectors."""
     denominator = np.abs(x) + np.abs(y)
 
@@ -50,7 +50,7 @@ def _camberra_distance(x: np.ndarray, y: np.ndarray) -> float:
 _distance_methods = {
     "minkowski": _minkowski_distance,
     "clark": _clark_distance,
-    "camberra": _camberra_distance,
+    "canberra": _canberra_distance,
     "euclidean": lambda x, y: _minkowski_distance(x, y, 2),
     "manhattan": lambda x, y: _minkowski_distance(x, y)
 }

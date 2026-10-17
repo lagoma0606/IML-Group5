@@ -66,7 +66,8 @@ class IVDM:
 
         self.n_features_in_ = X.shape[1]
         self.classes_, y_encoded = np.unique(y, return_inverse=True)
-        
+        if self.n_bins is None:
+                self.n_bins = max(5, len(self.classes_))
         self.feature_models_ = []
 
         for j in range(self.n_features_in_):
@@ -214,4 +215,24 @@ class IVDM:
             # Squared L2 distance between class-probability vectors.
             distance += np.sum((p_x - p_y) ** 2)
 
-        return float(np.sqrt(distance))
+    def transform(self, X):
+            """Map each instance to the concatenation of its per-feature
+            class-probability vectors.
+
+            The IVDM distance between two instances is the Euclidean distance
+            between their mapped vectors, so mapping once removes the repeated
+            probability lookups during neighbour search.
+            """
+            if not hasattr(self, "feature_models_"):
+                raise RuntimeError("Call fit(X, y) before transforming")
+
+            X = np.asarray(X)
+            rows = []
+            for i in range(len(X)):
+                parts = []
+                for j, model in enumerate(self.feature_models_):
+                    parts.append(self._get_probability(X[i, j], model))
+                rows.append(np.concatenate(parts))
+
+            return np.vstack(rows)
+            return float(np.sqrt(distance))
