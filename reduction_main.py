@@ -10,7 +10,8 @@ from sklearn.metrics import accuracy_score
 
 from data_loader import load_fold
 from fcnn import condense
-from eennth import reduce_eennth
+from eenth import reduce_eennth
+from drop3 import reduce_drop3
 from main import kNNAlgorithm
 
 BEST_KNN = {
@@ -22,7 +23,7 @@ BEST_KNN = {
 REDUCTION_METHODS = {
     'FCNN': condense,
     'EENN': reduce_eennth,
-    # 'DROP3': reduce_drop3  # TODO: Hybrid DROP3 implementation goes here
+    'DROP3': reduce_drop3
 }
 
 datasets = ['pima-indians', 'mx']
