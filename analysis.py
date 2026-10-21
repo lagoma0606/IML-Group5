@@ -1,8 +1,8 @@
 import pandas as pd
-import numpy as np
-from scipy.stats import wilcoxon, friedmanchisquare, studentized_range
+from scipy.stats import wilcoxon, friedmanchisquare
+from plots import critical_difference
 
-df = pd.read_csv('results/baseline.csv')
+df = pd.read_csv('results.csv')
 knn = df[df['model'] == 'kNN']
 
 
@@ -22,16 +22,6 @@ for name in ['pima-indians', 'mx']:
 # ------------------------------------------------------------------
 # 2. Friedman and Nemenyi over the kNN configurations
 # ------------------------------------------------------------------
-def critical_difference(k, n, alpha=0.05):
-    """Nemenyi critical difference between two mean ranks.
-
-    k = number of methods compared, n = number of datasets (folds here).
-    The studentized range replaces the published table, which stops well
-    before k = 120.
-    """
-    q = studentized_range.ppf(1 - alpha, k, np.inf) / np.sqrt(2)
-    return q * np.sqrt(k * (k + 1) / (6.0 * n))
-
 
 def friedman_with_ranks(pivot, label, higher_is_better=True):
     """Friedman test over the columns of pivot, plus Nemenyi mean ranks.
@@ -57,7 +47,7 @@ def friedman_with_ranks(pivot, label, higher_is_better=True):
     cd = critical_difference(k, n)
 
     print('---', label, '---')
-    print('methods:', k, ' folds:', n, ' Friedman p-value:', round(p, 6))
+    print('methods:', k, ' folds:', n, ' Friedman p-value:', format(p, '.3g'))
     print('critical difference:', round(cd, 3))
     print(mean_ranks.round(3))
 

@@ -12,7 +12,7 @@ from data_loader import load_fold
 from fcnn import condense
 from eenth import reduce_eennth
 from drop3 import reduce_drop3
-from main import kNNAlgorithm
+from knn import kNNAlgorithm
 
 BEST_KNN = {
     'pima-indians': ('euclidean', 7, 'majority', 'OG'),
@@ -48,7 +48,7 @@ for name in datasets:
 
             # --- Evaluate k-NN ---
             start_knn = time.time()
-            pred_knn, _ = kNNAlgorithm(
+            pred_knn, final_size = kNNAlgorithm(
                 x_train_red, y_train_red, x_test, y_test,
                 k=k, distance=dist, voting=voting, retention=retention, types=types
             )
@@ -57,7 +57,11 @@ for name in datasets:
             results.append({
                 'dataset': name, 'fold': i, 'reduction': red_name, 'model': 'kNN',
                 'accuracy': accuracy_score(y_test, pred_knn),
-                'time_reduction': time_red, 'time_inference': time_knn, 'storage_pct': storage_pct
+                'time_reduction': time_red, 'time_inference': time_knn,
+                # storage_pct: left after reduction
+                # final_storage_pct: what's left after OG forgets after inference
+                'storage_pct': storage_pct,
+                'final_storage_pct': final_size / original_size * 100.0
             })
 
             # --- Evaluate SVM ---

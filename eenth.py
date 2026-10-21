@@ -38,18 +38,22 @@ def wilson_prob_keep(D, yi, k=7, threshold=0.5):
 def reduce_eennth(x_train, y_train, metric):
     """Wrapper to make EENN match the fcnn.condense signature."""
     dist_func = get_distance(metric)
-    n_tr = len(x_train)
+
+    # Converted before the loop: x_train arrives from load_fold as a
+    # DataFrame, and indexing a DataFrame with [i] selects the column
+    # named i, not row i. On Pima that raises KeyError.
+    x_tr_arr = np.asarray(x_train)
+    y_tr_arr = np.asarray(y_train)
+
+    n_tr = len(x_tr_arr)
     D_train = np.zeros((n_tr, n_tr))
-    
+
     for i in range(n_tr):
         for j in range(i + 1, n_tr):
-            D_train[i, j] = D_train[j, i] = dist_func(x_train[i], x_train[j])
-            
-    unique_labels, y_mapped = np.unique(y_train, return_inverse=True)
-    
+            D_train[i, j] = D_train[j, i] = dist_func(x_tr_arr[i], x_tr_arr[j])
+
+    unique_labels, y_mapped = np.unique(y_tr_arr, return_inverse=True)
+
     keep_mask = wilson_prob_keep(D_train, y_mapped, k=7, threshold=0.5)
-    
-    x_tr_arr = np.array(x_train)
-    y_tr_arr = np.array(y_train)
-    
+
     return x_tr_arr[keep_mask], y_tr_arr[keep_mask]

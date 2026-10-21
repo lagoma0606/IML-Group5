@@ -6,101 +6,8 @@ from sklearn.model_selection import GridSearchCV
 import time
 from data_loader import load_fold
 from itertools import product
-import numpy as np
-from distance import get_distance
-from ivdm import IVDM
-from voting import VOTING
-
-
-def kNNAlgorithm(x_train, y_train, x_test,y_test, k, distance, voting, retention, types):
-    # Convert inputs to uniform NumPy arrays/lists
-    X_tr = x_train.to_numpy() if isinstance(x_train, pd.DataFrame) else np.asarray(x_train)
-    Y_tr = y_train.to_numpy() if isinstance(y_train, pd.Series) else np.asarray(y_train)
-    X_te = x_test.to_numpy() if isinstance(x_test, pd.DataFrame) else np.asarray(x_test)
-    Y_te = y_test.to_numpy() if isinstance(y_test, pd.Series) else np.asarray(y_test)
-    # 1. Distance metric selection
-    if distance == 'ivdm':
-        categorical_indices = [idx for idx, t in enumerate(types) if t != 'numeric']
-        n_classes = len(np.unique(Y_tr))
-        ivdm_model = IVDM(n_bins =max(5, n_classes), categorical_features=categorical_indices)
-        ivdm_model.fit(X_tr, Y_tr)
-
-        # IVDM equals the Euclidean distance between the concatenated
-        # class-probability vectors, so each instance is mapped once
-        # instead of recomputing its probabilities on every comparison.
-        X_tr = ivdm_model.transform(X_tr)
-        X_te = ivdm_model.transform(X_te)
-
-        def calc_dist(a, b):
-            return float(np.sqrt(np.sum((a - b) ** 2)))
-    else:
-        dist_func = get_distance(distance)
-        def calc_dist(a, b):
-            return dist_func(a, b)
-
-    vote_func = VOTING[voting]
-
-    # 2. Pre-inference retention pruning (OG)
-    x_train = [row for row in X_tr]
-    y_train = list(Y_tr)
-
-    # OG: every case is born neutral and is forgotten when its goodness
-    # falls back below the value it started with.
-    INITIAL_GOODNESS = 0.5
-    ALPHA = 0.2
-    goodness = [INITIAL_GOODNESS] * len(x_train)
-
-    # 3. Predict & update case base (NR, AR, DC)
-    predictions = []
-
-    for test_pt, true_label in zip(X_te, Y_te):
-        dists = [calc_dist(test_pt, train_pt) for train_pt in x_train]
-
-        k_indices = np.argsort(dists)[:k]
-        k_neighbors = [(dists[idx], y_train[idx]) for idx in k_indices]
-
-        pred_label = vote_func(k_neighbors)
-        predictions.append(pred_label)
-
-        # Retained cases carry their real class, not the predicted one:
-        # storing a wrong label would propagate the error to later queries.
-        if retention == 'AR':
-            x_train.append(np.asarray(test_pt))
-            y_train.append(true_label)
-            goodness.append(INITIAL_GOODNESS)
-
-        elif retention == 'DC':
-            if pred_label != true_label:
-                x_train.append(np.asarray(test_pt))
-                y_train.append(true_label)
-                goodness.append(INITIAL_GOODNESS)
-
-        elif retention == 'OG':
-            # Only the retrieved neighbours update their goodness, so the
-            # value reflects actual use rather than mere presence.
-            to_delete = []
-            for idx in k_indices:
-                if y_train[idx] == true_label:
-                    reward = 1.0
-                else:
-                    reward = 0.0
-                goodness[idx] += ALPHA * (reward - goodness[idx])
-                if goodness[idx] < INITIAL_GOODNESS:
-                    to_delete.append(idx)
-
-            # Highest index first, so removing one does not shift the
-            # position of those still pending. The case base is never left
-            # with fewer than k cases, or later queries could not retrieve
-            # k neighbours.
-            for idx in sorted(to_delete, reverse=True):
-                if len(x_train) > k:
-                    del x_train[idx]
-                    del y_train[idx]
-                    del goodness[idx]
-    case_base_size = len(x_train)
-    return predictions, case_base_size
-
-
+from knn import kNNAlgorithm
+from pathlib import Path
 # ------------------------------------------------------------------
 # Random forest configuration
 # ------------------------------------------------------------------
@@ -254,7 +161,7 @@ for name in datasets:
 
 
         # --------------------------------------------------------------
-        # kNN: 96 configurations per fold
+        # kNN: 120 configurations per fold
         # --------------------------------------------------------------
         for distance, k, voting, retention in knn_configs:
             start = time.time()
@@ -293,7 +200,7 @@ for name in datasets:
             })
 
 df_results = pd.DataFrame(results)
-df_results.to_csv('results.csv', index=False)
+df_results.to_csv(Path(__file__).parent / 'results.csv', index=False)
 
 rf = df_results[df_results['model'] == 'RF']
 svm = df_results[df_results['model'] == 'svm']
@@ -304,8 +211,6 @@ print(svm.groupby(['dataset', 'config'])[['accuracy', 'time']].mean())
 print(knn.groupby(['dataset', 'distance', 'k'])[['accuracy', 'time']].mean())
 
 # Final case base size per retention policy.
-# While the kNN is a placeholder all four give the same number; with the
-# real one, NR should leave it unchanged, AR grow it and OG shrink it.
 print(knn.groupby(['dataset', 'retention'])[['case_base_size', 'fold_train_size', 'storage_pct']].mean())
 
 svm_tuned = df_results[df_results['model'] == 'svm-tuned']

@@ -25,7 +25,7 @@ class IVDM:
         if n_bins is not None and n_bins < 1:
             raise ValueError("n_bins must be at least 1")
 
-        self.n_bins = n_bins or max(5, len(self.classes_))
+        self.n_bins = n_bins
         self.categorical_features = set(categorical_features)
         
 
