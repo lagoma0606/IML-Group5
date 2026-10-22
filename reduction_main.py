@@ -13,6 +13,8 @@ from fcnn import condense
 from eenth import reduce_eennth
 from drop3 import reduce_drop3
 from knn import kNNAlgorithm
+import numpy as np
+from pathlib import Path
 
 BEST_KNN = {
     'pima-indians': ('euclidean', 7, 'majority', 'OG'),
@@ -35,6 +37,7 @@ for name in datasets:
 
     for i in range(10):
         x_train, y_train, x_test, y_test, types = load_fold(name, i)
+        x_test = np.asarray(x_test)
         original_size = len(x_train)
 
         for red_name, red_func in REDUCTION_METHODS.items():
@@ -91,7 +94,7 @@ for name in datasets:
             })
 
 df_results = pd.DataFrame(results)
-df_results.to_csv('reduction_results.csv', index=False)
+df_results.to_csv(Path(__file__).parent / 'reduction_results.csv', index=False)
 
 print("\n=== Results Summary (Means) ===")
 summary = df_results.groupby(['dataset', 'reduction', 'model'])[['accuracy', 'time_inference', 'storage_pct']].mean()

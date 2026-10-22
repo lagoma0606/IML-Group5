@@ -59,7 +59,7 @@ def _enn_filter(D, y, k=3):
     return keep_mask
 
 
-def _find_associates(D, y, active_mask, k=1):
+def _find_associates(D, y, active_mask, k=3):
     """Find associates for all active instances.
 
     An instance 'a' is an associate of instance 'p' if 'p' is one of 'a's k-NNs.
@@ -138,6 +138,12 @@ def drop3(X, y, metric='euclidean', k=1):
         associates_map = _find_associates(D, y_arr, active_mask, k=k)
         associates = associates_map.get(p, set())
 
+        # No associates means no evidence either way, so p stays.
+        if not associates:
+            continue
+
+        # Accuracy of associates with p present
+
         # Accuracy of associates with p present
         acc_with_p = sum(
             1 for a in associates if _classify(D, y_arr, active_mask, a, k=k) == y_arr[a]
@@ -160,4 +166,4 @@ def drop3(X, y, metric='euclidean', k=1):
 
 def reduce_drop3(x_train, y_train, metric='euclidean'):
     """Wrapper function matching the reduction_main interface."""
-    return drop3(x_train, y_train, metric=metric, k=1)
+    return drop3(x_train, y_train, metric=metric, k=3)
