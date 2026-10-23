@@ -7,7 +7,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.stats import friedmanchisquare, studentized_range
+from scipy.stats import friedmanchisquare, studentized_range, wilcoxon
 
 BASE_DIR = Path(__file__).parent
 RESULTS_FILE = BASE_DIR / 'results.csv'
@@ -84,6 +84,27 @@ def friedman_p(pivot):
         columns.append(pivot[c].values)
     stat, p = friedmanchisquare(*columns)
     return p
+
+
+def with_rf_params(df):
+    """Random Forest rows with its two parameters in columns of their own.
+
+    main.py stores the configuration as '<n_estimators>_<criterion>', so the
+    parameters have to be read back out of that string before they can be
+    compared one at a time, the way the kNN parameters already are.
+    """
+    rf = df[df['model'] == 'RF'].copy()
+
+    n_estimators = []
+    criterion = []
+    for value in rf['config']:
+        parts = value.split('_')
+        n_estimators.append(int(parts[0]))
+        criterion.append(parts[1])
+
+    rf['n_estimators'] = n_estimators
+    rf['criterion'] = criterion
+    return rf
 
 
 # ----------------------------------------------------------------------
@@ -289,42 +310,115 @@ def storage_by_retention(knn):
 # ----------------------------------------------------------------------
 # Tables
 # ----------------------------------------------------------------------
-def summary_tables(knn):
+def paired_lines(df):
+    """Wilcoxon for every comparison that has exactly two levels.
+
+    Friedman needs three or more methods. Demsar (section 4.2) uses the
+    Wilcoxon signed-ranks test for two, which is the case for kNN voting,
+    the Random Forest criterion and the two SVM kernels.
+    """
+    knn = df[df['model'] == 'kNN']
+    rf = with_rf_params(df)
+    svm = df[df['model'] == 'svm']
+
+    # (model, its rows, the column holding the two levels, first, second)
+    comparisons = [
+        ('kNN', knn, 'voting', 'majority', 'inverse_distance'),
+        ('RF', rf, 'criterion', 'gini', 'entropy'),
+        ('SVM', svm, 'config', 'linear', 'rbf'),
+    ]
+
+    lines = ['## Paired comparisons (Wilcoxon)', '']
+    lines.append('| Dataset | Model | Metric | Comparison '
+                 '| Mean first | Mean second | p-value |')
+    lines.append('| --- | --- | --- | --- | --- | --- | --- |')
+
+    for metric, higher_is_better in METRICS:
+        # Only kNN keeps a case base, so only kNN has a storage figure.
+        if metric == 'storage_pct':
+            continue
+
+        for dataset in DATASETS:
+            for model, rows, param, first, second in comparisons:
+                subset = rows[rows['dataset'] == dataset]
+                pivot = subset.pivot_table(index='fold', columns=param,
+                                           values=metric)
+
+                # A paired test matches fold 0 against fold 0, so both columns
+                # must arrive in the same fold order. pivot_table sorts by its
+                # index, which is the fold, so they do.
+                a = pivot[first].values
+                b = pivot[second].values
+
+                if np.all(a == b):
+                    p_text = 'all folds tied'
+                else:
+                    stat, p = wilcoxon(a, b)
+                    p_text = format(p, '.4g')
+
+                lines.append('| ' + dataset
+                             + ' | ' + model
+                             + ' | ' + metric
+                             + ' | ' + first + ' vs ' + second
+                             + ' | ' + str(round(a.mean(), 4))
+                             + ' | ' + str(round(b.mean(), 4))
+                             + ' | ' + p_text + ' |')
+
+    lines.append('')
+    return lines
+
+
+def summary_tables(df):
     """One row per level of each parameter, as markdown ready to paste."""
-    lines = []
+    # (model, its rows, the parameters with three or more levels)
+    groups = [
+        ('kNN', df[df['model'] == 'kNN'], PARAMS),
+        ('RF', with_rf_params(df), ['n_estimators']),
+    ]
+
+    lines = ['## Friedman tests', '']
 
     for metric, higher_is_better in METRICS:
         lines.append('### ' + metric)
         lines.append('')
-        lines.append('| Dataset | Parameter | Level | Mean rank '
+        lines.append('| Dataset | Model | Parameter | Level | Mean rank '
                      '| Friedman p | CD | Within CD of best |')
-        lines.append('| --- | --- | --- | --- | --- | --- | --- |')
+        lines.append('| --- | --- | --- | --- | --- | --- | --- | --- |')
 
         for dataset in DATASETS:
-            subset = knn[knn['dataset'] == dataset]
+            for model, rows, params in groups:
+                # Only kNN keeps a case base, so only kNN has a storage figure.
+                if metric == 'storage_pct' and model != 'kNN':
+                    continue
 
-            for param in PARAMS:
-                pivot = subset.pivot_table(index='fold', columns=param,
-                                           values=metric)
-                ranks = mean_ranks(pivot, higher_is_better)
-                p = friedman_p(pivot)
-                cd = critical_difference(pivot.shape[1], pivot.shape[0])
-                best = ranks.iloc[0]
+                subset = rows[rows['dataset'] == dataset]
 
-                for level in ranks.index:
-                    if ranks[level] <= best + cd:
-                        verdict = 'yes'
-                    else:
-                        verdict = 'no'
+                for param in params:
+                    pivot = subset.pivot_table(index='fold', columns=param,
+                                               values=metric)
+                    ranks = mean_ranks(pivot, higher_is_better)
+                    p = friedman_p(pivot)
+                    cd = critical_difference(pivot.shape[1], pivot.shape[0])
+                    best = ranks.iloc[0]
 
-                    lines.append('| ' + dataset
-                                 + ' | ' + param
-                                 + ' | ' + trim(level)
-                                 + ' | ' + str(round(ranks[level], 2))
-                                 + ' | ' + format(p, '.3g')
-                                 + ' | ' + str(round(cd, 2))
-                                 + ' | ' + verdict + ' |')
+                    for level in ranks.index:
+                        if ranks[level] <= best + cd:
+                            verdict = 'yes'
+                        else:
+                            verdict = 'no'
+
+                        lines.append('| ' + dataset
+                                     + ' | ' + model
+                                     + ' | ' + param
+                                     + ' | ' + trim(level)
+                                     + ' | ' + str(round(ranks[level], 2))
+                                     + ' | ' + format(p, '.3g')
+                                     + ' | ' + str(round(cd, 2))
+                                     + ' | ' + verdict + ' |')
         lines.append('')
+
+    for line in paired_lines(df):
+        lines.append(line)
 
     TABLE_FILE.write_text('\n'.join(lines), encoding='utf-8')
 
@@ -334,8 +428,8 @@ def main():
     if not RESULTS_FILE.exists():
         raise SystemExit('results.csv not found. Run main.py first.')
 
-    knn = pd.read_csv(RESULTS_FILE)
-    knn = knn[knn['model'] == 'kNN']
+    df = pd.read_csv(RESULTS_FILE)
+    knn = df[df['model'] == 'kNN']
 
     for dataset in DATASETS:
         k_effect(knn, dataset)
@@ -352,7 +446,7 @@ def main():
         'Critical difference, accuracy by k — pima-indians',
         'cd_pima-indians_k.png')
 
-    summary_tables(knn)
+    summary_tables(df)
 
     print('Figures written to', FIGURES_DIR)
     print('Tables written to', TABLE_FILE)

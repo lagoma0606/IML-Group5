@@ -92,16 +92,72 @@ for name in ['pima-indians', 'mx']:
 # 3. SVM kernels
 # ------------------------------------------------------------------
 # Each fold is treated as a dataset, as the lecturer indicated.
-svm = df[(df['model'] == 'svm') & (df['dataset'] == 'pima-indians')]
+# Two kernels, so Wilcoxon applies rather than Friedman.
+for name in ['pima-indians', 'mx']:
+    svm = df[(df['model'] == 'svm') & (df['dataset'] == name)]
 
-linear = svm[svm['config'] == 'linear'].sort_values('fold')['accuracy'].values
-rbf = svm[svm['config'] == 'rbf'].sort_values('fold')['accuracy'].values
+    # sort_values('fold') is essential: Wilcoxon is a paired test, it compares
+    # fold 0 against fold 0, fold 1 against fold 1. If the two vectors arrived
+    # in a different order, the pairing would be wrong.
+    linear = svm[svm['config'] == 'linear'].sort_values('fold')['accuracy'].values
+    rbf = svm[svm['config'] == 'rbf'].sort_values('fold')['accuracy'].values
 
-print(linear)
-print(rbf)
+    stat, p = wilcoxon(linear, rbf)
 
-# sort_values('fold') is essential: Wilcoxon is a paired test, it compares
-# fold 0 against fold 0, fold 1 against fold 1. If the two vectors arrived
-# in a different order, the pairing would be wrong.
-stat, p = wilcoxon(linear, rbf)
-print("p-value:", p)
+    print('---', name, '- SVM kernel ---')
+    print('linear:', round(linear.mean(), 4))
+    print('rbf   :', round(rbf.mean(), 4))
+    print('Wilcoxon p-value:', format(p, '.4g'))
+    print()
+
+
+# ------------------------------------------------------------------
+# 4. Random Forest
+# ------------------------------------------------------------------
+# main.py stores the configuration as '<n_estimators>_<criterion>', so the
+# two parameters have to be read back out of that string before they can be
+# compared one at a time.
+rf = df[df['model'] == 'RF'].copy()
+
+n_estimators = []
+criterion = []
+for value in rf['config']:
+    parts = value.split('_')
+    n_estimators.append(int(parts[0]))
+    criterion.append(parts[1])
+
+rf['n_estimators'] = n_estimators
+rf['criterion'] = criterion
+
+# Random Forest holds no case base, so storage does not apply to it.
+RF_METRICS = [('accuracy', True), ('time', False)]
+
+for name in ['pima-indians', 'mx']:
+    subset = rf[rf['dataset'] == name]
+
+    for metric, higher_is_better in RF_METRICS:
+        label = name + ' - RF - ' + metric
+
+        # All 8 configurations at once.
+        pivot = subset.pivot_table(index='fold', columns='config', values=metric)
+        friedman_with_ranks(pivot, label + ' - all configurations', higher_is_better)
+
+        # Four numbers of trees, so Friedman applies.
+        pivot = subset.pivot_table(index='fold', columns='n_estimators',
+                                   values=metric)
+        friedman_with_ranks(pivot, label + ' - n_estimators', higher_is_better)
+
+        # Two criteria, so Wilcoxon applies instead.
+        pivot = subset.pivot_table(index='fold', columns='criterion',
+                                   values=metric)
+        gini = pivot['gini'].values
+        entropy = pivot['entropy'].values
+
+        print('---', label, '- criterion ---')
+        if (gini == entropy).all():
+            print('every fold tied, Wilcoxon does not apply')
+        else:
+            stat, p = wilcoxon(gini, entropy)
+            print('Wilcoxon p-value:', format(p, '.4g'))
+        print(pivot.mean().round(4))
+        print()

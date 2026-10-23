@@ -1,86 +1,121 @@
+## Friedman tests
+
 ### accuracy
 
-| Dataset | Parameter | Level | Mean rank | Friedman p | CD | Within CD of best |
-| --- | --- | --- | --- | --- | --- | --- |
-| pima-indians | distance | ivdm | 2.15 | 0.112 | 1.93 | yes |
-| pima-indians | distance | euclidean | 2.6 | 0.112 | 1.93 | yes |
-| pima-indians | distance | manhattan | 2.95 | 0.112 | 1.93 | yes |
-| pima-indians | distance | clark | 3.4 | 0.112 | 1.93 | yes |
-| pima-indians | distance | canberra | 3.9 | 0.112 | 1.93 | yes |
-| pima-indians | k | 7 | 1.3 | 0.00745 | 1.05 | yes |
-| pima-indians | k | 5 | 2.0 | 0.00745 | 1.05 | yes |
-| pima-indians | k | 3 | 2.7 | 0.00745 | 1.05 | no |
-| pima-indians | retention | AR | 2.15 | 0.194 | 1.48 | yes |
-| pima-indians | retention | OG | 2.25 | 0.194 | 1.48 | yes |
-| pima-indians | retention | NR | 2.35 | 0.194 | 1.48 | yes |
-| pima-indians | retention | DC | 3.25 | 0.194 | 1.48 | yes |
-| mx | distance | canberra | 2.5 | 4.33e-08 | 1.93 | yes |
-| mx | distance | clark | 2.5 | 4.33e-08 | 1.93 | yes |
-| mx | distance | euclidean | 2.5 | 4.33e-08 | 1.93 | yes |
-| mx | distance | manhattan | 2.5 | 4.33e-08 | 1.93 | yes |
-| mx | distance | ivdm | 5.0 | 4.33e-08 | 1.93 | no |
-| mx | k | 7 | 1.0 | 4.54e-05 | 1.05 | yes |
-| mx | k | 5 | 2.0 | 4.54e-05 | 1.05 | yes |
-| mx | k | 3 | 3.0 | 4.54e-05 | 1.05 | no |
-| mx | retention | DC | 2.0 | 0.0954 | 1.48 | yes |
-| mx | retention | AR | 2.1 | 0.0954 | 1.48 | yes |
-| mx | retention | OG | 2.6 | 0.0954 | 1.48 | yes |
-| mx | retention | NR | 3.3 | 0.0954 | 1.48 | yes |
+| Dataset | Model | Parameter | Level | Mean rank | Friedman p | CD | Within CD of best |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| pima-indians | kNN | distance | ivdm | 2.15 | 0.112 | 1.93 | yes |
+| pima-indians | kNN | distance | euclidean | 2.6 | 0.112 | 1.93 | yes |
+| pima-indians | kNN | distance | manhattan | 2.95 | 0.112 | 1.93 | yes |
+| pima-indians | kNN | distance | clark | 3.4 | 0.112 | 1.93 | yes |
+| pima-indians | kNN | distance | canberra | 3.9 | 0.112 | 1.93 | yes |
+| pima-indians | kNN | k | 7 | 1.3 | 0.00745 | 1.05 | yes |
+| pima-indians | kNN | k | 5 | 2.0 | 0.00745 | 1.05 | yes |
+| pima-indians | kNN | k | 3 | 2.7 | 0.00745 | 1.05 | no |
+| pima-indians | kNN | retention | AR | 2.15 | 0.194 | 1.48 | yes |
+| pima-indians | kNN | retention | OG | 2.25 | 0.194 | 1.48 | yes |
+| pima-indians | kNN | retention | NR | 2.35 | 0.194 | 1.48 | yes |
+| pima-indians | kNN | retention | DC | 3.25 | 0.194 | 1.48 | yes |
+| pima-indians | RF | n_estimators | 200 | 1.85 | 0.0301 | 1.48 | yes |
+| pima-indians | RF | n_estimators | 100 | 2.1 | 0.0301 | 1.48 | yes |
+| pima-indians | RF | n_estimators | 50 | 2.65 | 0.0301 | 1.48 | yes |
+| pima-indians | RF | n_estimators | 10 | 3.4 | 0.0301 | 1.48 | no |
+| mx | kNN | distance | canberra | 2.5 | 4.33e-08 | 1.93 | yes |
+| mx | kNN | distance | clark | 2.5 | 4.33e-08 | 1.93 | yes |
+| mx | kNN | distance | euclidean | 2.5 | 4.33e-08 | 1.93 | yes |
+| mx | kNN | distance | manhattan | 2.5 | 4.33e-08 | 1.93 | yes |
+| mx | kNN | distance | ivdm | 5.0 | 4.33e-08 | 1.93 | no |
+| mx | kNN | k | 7 | 1.0 | 4.54e-05 | 1.05 | yes |
+| mx | kNN | k | 5 | 2.0 | 4.54e-05 | 1.05 | yes |
+| mx | kNN | k | 3 | 3.0 | 4.54e-05 | 1.05 | no |
+| mx | kNN | retention | DC | 2.0 | 0.0954 | 1.48 | yes |
+| mx | kNN | retention | AR | 2.1 | 0.0954 | 1.48 | yes |
+| mx | kNN | retention | OG | 2.6 | 0.0954 | 1.48 | yes |
+| mx | kNN | retention | NR | 3.3 | 0.0954 | 1.48 | yes |
+| mx | RF | n_estimators | 200 | 1.75 | 1.18e-05 | 1.48 | yes |
+| mx | RF | n_estimators | 100 | 1.9 | 1.18e-05 | 1.48 | yes |
+| mx | RF | n_estimators | 50 | 2.35 | 1.18e-05 | 1.48 | yes |
+| mx | RF | n_estimators | 10 | 4.0 | 1.18e-05 | 1.48 | no |
 
 ### time
 
-| Dataset | Parameter | Level | Mean rank | Friedman p | CD | Within CD of best |
-| --- | --- | --- | --- | --- | --- | --- |
-| pima-indians | distance | euclidean | 1.2 | 2.39e-07 | 1.93 | yes |
-| pima-indians | distance | manhattan | 2.0 | 2.39e-07 | 1.93 | yes |
-| pima-indians | distance | ivdm | 2.8 | 2.39e-07 | 1.93 | yes |
-| pima-indians | distance | canberra | 4.1 | 2.39e-07 | 1.93 | no |
-| pima-indians | distance | clark | 4.9 | 2.39e-07 | 1.93 | no |
-| pima-indians | k | 7 | 1.4 | 0.0273 | 1.05 | yes |
-| pima-indians | k | 5 | 2.0 | 0.0273 | 1.05 | yes |
-| pima-indians | k | 3 | 2.6 | 0.0273 | 1.05 | no |
-| pima-indians | retention | OG | 1.0 | 5.56e-06 | 1.48 | yes |
-| pima-indians | retention | NR | 2.4 | 5.56e-06 | 1.48 | yes |
-| pima-indians | retention | DC | 2.6 | 5.56e-06 | 1.48 | no |
-| pima-indians | retention | AR | 4.0 | 5.56e-06 | 1.48 | no |
-| mx | distance | ivdm | 1.0 | 1.08e-07 | 1.93 | yes |
-| mx | distance | euclidean | 2.0 | 1.08e-07 | 1.93 | yes |
-| mx | distance | manhattan | 3.0 | 1.08e-07 | 1.93 | no |
-| mx | distance | canberra | 4.4 | 1.08e-07 | 1.93 | no |
-| mx | distance | clark | 4.6 | 1.08e-07 | 1.93 | no |
-| mx | k | 7 | 1.3 | 0.0136 | 1.05 | yes |
-| mx | k | 5 | 2.1 | 0.0136 | 1.05 | yes |
-| mx | k | 3 | 2.6 | 0.0136 | 1.05 | no |
-| mx | retention | OG | 1.3 | 0.000105 | 1.48 | yes |
-| mx | retention | NR | 2.2 | 0.000105 | 1.48 | yes |
-| mx | retention | DC | 2.6 | 0.000105 | 1.48 | yes |
-| mx | retention | AR | 3.9 | 0.000105 | 1.48 | no |
+| Dataset | Model | Parameter | Level | Mean rank | Friedman p | CD | Within CD of best |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| pima-indians | kNN | distance | euclidean | 1.2 | 2.39e-07 | 1.93 | yes |
+| pima-indians | kNN | distance | manhattan | 2.0 | 2.39e-07 | 1.93 | yes |
+| pima-indians | kNN | distance | ivdm | 2.8 | 2.39e-07 | 1.93 | yes |
+| pima-indians | kNN | distance | canberra | 4.1 | 2.39e-07 | 1.93 | no |
+| pima-indians | kNN | distance | clark | 4.9 | 2.39e-07 | 1.93 | no |
+| pima-indians | kNN | k | 7 | 1.4 | 0.0273 | 1.05 | yes |
+| pima-indians | kNN | k | 5 | 2.0 | 0.0273 | 1.05 | yes |
+| pima-indians | kNN | k | 3 | 2.6 | 0.0273 | 1.05 | no |
+| pima-indians | kNN | retention | OG | 1.0 | 5.56e-06 | 1.48 | yes |
+| pima-indians | kNN | retention | NR | 2.4 | 5.56e-06 | 1.48 | yes |
+| pima-indians | kNN | retention | DC | 2.6 | 5.56e-06 | 1.48 | no |
+| pima-indians | kNN | retention | AR | 4.0 | 5.56e-06 | 1.48 | no |
+| pima-indians | RF | n_estimators | 10 | 1.0 | 1.38e-06 | 1.48 | yes |
+| pima-indians | RF | n_estimators | 50 | 2.0 | 1.38e-06 | 1.48 | yes |
+| pima-indians | RF | n_estimators | 100 | 3.0 | 1.38e-06 | 1.48 | no |
+| pima-indians | RF | n_estimators | 200 | 4.0 | 1.38e-06 | 1.48 | no |
+| mx | kNN | distance | ivdm | 1.0 | 1.08e-07 | 1.93 | yes |
+| mx | kNN | distance | euclidean | 2.0 | 1.08e-07 | 1.93 | yes |
+| mx | kNN | distance | manhattan | 3.0 | 1.08e-07 | 1.93 | no |
+| mx | kNN | distance | canberra | 4.4 | 1.08e-07 | 1.93 | no |
+| mx | kNN | distance | clark | 4.6 | 1.08e-07 | 1.93 | no |
+| mx | kNN | k | 7 | 1.4 | 0.045 | 1.05 | yes |
+| mx | kNN | k | 5 | 2.1 | 0.045 | 1.05 | yes |
+| mx | kNN | k | 3 | 2.5 | 0.045 | 1.05 | no |
+| mx | kNN | retention | OG | 1.0 | 4.67e-06 | 1.48 | yes |
+| mx | kNN | retention | NR | 2.3 | 4.67e-06 | 1.48 | yes |
+| mx | kNN | retention | DC | 2.7 | 4.67e-06 | 1.48 | no |
+| mx | kNN | retention | AR | 4.0 | 4.67e-06 | 1.48 | no |
+| mx | RF | n_estimators | 10 | 1.0 | 1.38e-06 | 1.48 | yes |
+| mx | RF | n_estimators | 50 | 2.0 | 1.38e-06 | 1.48 | yes |
+| mx | RF | n_estimators | 100 | 3.0 | 1.38e-06 | 1.48 | no |
+| mx | RF | n_estimators | 200 | 4.0 | 1.38e-06 | 1.48 | no |
 
 ### storage_pct
 
-| Dataset | Parameter | Level | Mean rank | Friedman p | CD | Within CD of best |
+| Dataset | Model | Parameter | Level | Mean rank | Friedman p | CD | Within CD of best |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| pima-indians | kNN | distance | canberra | 1.5 | 0.000207 | 1.93 | yes |
+| pima-indians | kNN | distance | clark | 2.2 | 0.000207 | 1.93 | yes |
+| pima-indians | kNN | distance | manhattan | 3.05 | 0.000207 | 1.93 | yes |
+| pima-indians | kNN | distance | euclidean | 4.0 | 0.000207 | 1.93 | no |
+| pima-indians | kNN | distance | ivdm | 4.25 | 0.000207 | 1.93 | no |
+| pima-indians | kNN | k | 7 | 1.0 | 4.54e-05 | 1.05 | yes |
+| pima-indians | kNN | k | 5 | 2.0 | 4.54e-05 | 1.05 | yes |
+| pima-indians | kNN | k | 3 | 3.0 | 4.54e-05 | 1.05 | no |
+| pima-indians | kNN | retention | OG | 1.0 | 1.38e-06 | 1.48 | yes |
+| pima-indians | kNN | retention | NR | 2.0 | 1.38e-06 | 1.48 | yes |
+| pima-indians | kNN | retention | DC | 3.0 | 1.38e-06 | 1.48 | no |
+| pima-indians | kNN | retention | AR | 4.0 | 1.38e-06 | 1.48 | no |
+| mx | kNN | distance | ivdm | 1.0 | 4.33e-08 | 1.93 | yes |
+| mx | kNN | distance | canberra | 3.5 | 4.33e-08 | 1.93 | no |
+| mx | kNN | distance | clark | 3.5 | 4.33e-08 | 1.93 | no |
+| mx | kNN | distance | euclidean | 3.5 | 4.33e-08 | 1.93 | no |
+| mx | kNN | distance | manhattan | 3.5 | 4.33e-08 | 1.93 | no |
+| mx | kNN | k | 7 | 1.0 | 4.54e-05 | 1.05 | yes |
+| mx | kNN | k | 5 | 2.0 | 4.54e-05 | 1.05 | yes |
+| mx | kNN | k | 3 | 3.0 | 4.54e-05 | 1.05 | no |
+| mx | kNN | retention | OG | 1.0 | 1.38e-06 | 1.48 | yes |
+| mx | kNN | retention | NR | 2.0 | 1.38e-06 | 1.48 | yes |
+| mx | kNN | retention | DC | 3.0 | 1.38e-06 | 1.48 | no |
+| mx | kNN | retention | AR | 4.0 | 1.38e-06 | 1.48 | no |
+
+## Paired comparisons (Wilcoxon)
+
+| Dataset | Model | Metric | Comparison | Mean first | Mean second | p-value |
 | --- | --- | --- | --- | --- | --- | --- |
-| pima-indians | distance | canberra | 1.5 | 0.000207 | 1.93 | yes |
-| pima-indians | distance | clark | 2.2 | 0.000207 | 1.93 | yes |
-| pima-indians | distance | manhattan | 3.05 | 0.000207 | 1.93 | yes |
-| pima-indians | distance | euclidean | 4.0 | 0.000207 | 1.93 | no |
-| pima-indians | distance | ivdm | 4.25 | 0.000207 | 1.93 | no |
-| pima-indians | k | 7 | 1.0 | 4.54e-05 | 1.05 | yes |
-| pima-indians | k | 5 | 2.0 | 4.54e-05 | 1.05 | yes |
-| pima-indians | k | 3 | 3.0 | 4.54e-05 | 1.05 | no |
-| pima-indians | retention | OG | 1.0 | 1.38e-06 | 1.48 | yes |
-| pima-indians | retention | NR | 2.0 | 1.38e-06 | 1.48 | yes |
-| pima-indians | retention | DC | 3.0 | 1.38e-06 | 1.48 | no |
-| pima-indians | retention | AR | 4.0 | 1.38e-06 | 1.48 | no |
-| mx | distance | ivdm | 1.0 | 4.33e-08 | 1.93 | yes |
-| mx | distance | canberra | 3.5 | 4.33e-08 | 1.93 | no |
-| mx | distance | clark | 3.5 | 4.33e-08 | 1.93 | no |
-| mx | distance | euclidean | 3.5 | 4.33e-08 | 1.93 | no |
-| mx | distance | manhattan | 3.5 | 4.33e-08 | 1.93 | no |
-| mx | k | 7 | 1.0 | 4.54e-05 | 1.05 | yes |
-| mx | k | 5 | 2.0 | 4.54e-05 | 1.05 | yes |
-| mx | k | 3 | 3.0 | 4.54e-05 | 1.05 | no |
-| mx | retention | OG | 1.0 | 1.38e-06 | 1.48 | yes |
-| mx | retention | NR | 2.0 | 1.38e-06 | 1.48 | yes |
-| mx | retention | DC | 3.0 | 1.38e-06 | 1.48 | no |
-| mx | retention | AR | 4.0 | 1.38e-06 | 1.48 | no |
+| pima-indians | kNN | accuracy | majority vs inverse_distance | 0.7347 | 0.7331 | 0.1289 |
+| pima-indians | RF | accuracy | gini vs entropy | 0.758 | 0.756 | 0.7109 |
+| pima-indians | SVM | accuracy | linear vs rbf | 0.7646 | 0.7646 | 0.8672 |
+| mx | kNN | accuracy | majority vs inverse_distance | 0.8579 | 0.8565 | 0.1309 |
+| mx | RF | accuracy | gini vs entropy | 0.9901 | 0.9904 | 0.5391 |
+| mx | SVM | accuracy | linear vs rbf | 0.62 | 0.9971 | 0.001953 |
+| pima-indians | kNN | time | majority vs inverse_distance | 0.5213 | 0.5204 | 0.625 |
+| pima-indians | RF | time | gini vs entropy | 0.2111 | 0.2371 | 0.01953 |
+| pima-indians | SVM | time | linear vs rbf | 0.0123 | 0.0155 | 0.02734 |
+| mx | kNN | time | majority vs inverse_distance | 3.2461 | 3.2385 | 0.9219 |
+| mx | RF | time | gini vs entropy | 0.1987 | 0.1969 | 0.9219 |
+| mx | SVM | time | linear vs rbf | 0.0829 | 0.0713 | 0.009766 |
