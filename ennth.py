@@ -2,7 +2,7 @@ import numpy as np
 from distance import get_distance
 
 def wilson_prob_keep(D, yi, k=7, threshold=0.5):
-    """Core EENN boolean mask generator."""
+    """Core ENN boolean mask generator."""
     n = len(yi)
     kk = min(k, n - 1)
     if kk < 1:
@@ -35,8 +35,8 @@ def wilson_prob_keep(D, yi, k=7, threshold=0.5):
 
     return (pred_labels == yi) & (max_probs > threshold)
 
-def reduce_eennth(x_train, y_train, metric):
-    """Wrapper to make EENN match the fcnn.condense signature."""
+def reduce_ennth(x_train, y_train, metric):
+    """Wrapper to make ENN match the fcnn.condense signature."""
     dist_func = get_distance(metric)
 
     # Converted before the loop: x_train arrives from load_fold as a

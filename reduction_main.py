@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score
 
 from data_loader import load_fold
 from fcnn import condense
-from eenth import reduce_eennth
+from ennth import reduce_ennth
 from drop3 import reduce_drop3
 from knn import kNNAlgorithm
 import numpy as np
@@ -24,7 +24,7 @@ BEST_KNN = {
 # Map of reduction methods to ensure uniform loop execution
 REDUCTION_METHODS = {
     'FCNN': condense,
-    'EENN': reduce_eennth,
+    'ENNth': reduce_ennth,
     'DROP3': reduce_drop3
 }
 

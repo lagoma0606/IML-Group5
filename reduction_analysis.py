@@ -19,7 +19,7 @@ FIGURES_DIR = BASE_DIR / 'figures'
 FIGURES_DIR.mkdir(exist_ok=True)
 
 DATASETS = ['pima-indians', 'mx']
-TECHNIQUES = ['FCNN', 'ENNTh', 'DROP3']
+TECHNIQUES = ['FCNN', 'ENNth', 'DROP3']
 
 # The kNN the reduction is applied to, and the two baselines section 14
 # compares the reduced training sets against.
@@ -60,7 +60,7 @@ def compare(baseline, reduction, dataset, model):
 
     pivot = pd.DataFrame(columns)
     stat, p = friedmanchisquare(pivot['none'], pivot['FCNN'],
-                                pivot['EENN'], pivot['DROP3'])
+                                pivot['ENNth'], pivot['DROP3'])
     ranks = mean_ranks(pivot, higher_is_better=True)
     cd = critical_difference(4, 10)
 
