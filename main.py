@@ -1,12 +1,11 @@
 import pandas as pd
-from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV
 import time
 from data_loader import load_fold
 from itertools import product
 from knn import kNNAlgorithm
+from svm import svmAlgorithm, svmTunedAlgorithm
+from rf import rfAlgorithm, rfTunedAlgorithm
 from pathlib import Path
 # ------------------------------------------------------------------
 # Random forest configuration
@@ -35,21 +34,11 @@ retentions = ['NR', 'AR', 'DC', 'OG']
 knn_configs = list(product(distances, k_values, votings, retentions))
 
 # ------------------------------------------------------------------
-# Hyperparameter search. C and gamma interact with each other, so they
-# are tuned together rather than one at a time. The search uses cross
-# validation inside the training set of each fold (cv=5), so the test
-# set does not take part in choosing the parameters.
+# Hyperparameter grids for the tuned SVM and RF live in svm.py (C and
+# gamma, tuned together) and rf.py. The search uses cross validation
+# inside the training set of each fold (cv=5), so the test set does not
+# take part in choosing the parameters.
 # ------------------------------------------------------------------
-param_grid_svm = {
-    'C': [0.1, 1, 10, 100],
-    'gamma': [0.001, 0.01, 0.1, 1],
-}
-
-param_grid_rf = {
-    'n_estimators': [100, 300],
-    'max_depth': [None, 5, 10],
-    'max_features': ['sqrt', 'log2', None],
-}
 
 results = []
 
@@ -70,15 +59,11 @@ for name in datasets:
         # random_state fixes the random sequence for reproducibility.
         # --------------------------------------------------------------
         for n_estimators, c in config:
-            model = RandomForestClassifier(
-                n_estimators=n_estimators,
-                criterion=c,
-                random_state=42
-            )
             # Stopwatch: starts before training, stops after predicting
             start = time.time()
-            model.fit(x_train, y_train)
-            prediction = model.predict(x_test)
+            prediction = rfAlgorithm(x_train, y_train, x_test,
+                                     n_estimators=n_estimators,
+                                     criterion=c)
             end_time = time.time() - start
 
             accuracy = accuracy_score(y_test, prediction)
@@ -99,10 +84,8 @@ for name in datasets:
         # linear draws a straight line, rbf allows curved boundaries.
         # --------------------------------------------------------------
         for kernel in ['linear', 'rbf']:
-            model = SVC(kernel=kernel)
             start = time.time()
-            model.fit(x_train, y_train)
-            prediction = model.predict(x_test)
+            prediction = svmAlgorithm(x_train, y_train, x_test, kernel=kernel)
             end_time = time.time() - start
 
             accuracy = accuracy_score(y_test, prediction)
@@ -121,39 +104,29 @@ for name in datasets:
         # the fixed configurations: a grid search trains dozens of
         # models, so its time is not comparable with a single fit.
         # --------------------------------------------------------------
-        grid_svm = GridSearchCV(
-            SVC(kernel='rbf', random_state=42),
-            param_grid_svm, cv=5, scoring='accuracy'
-        )
         start = time.time()
-        grid_svm.fit(x_train, y_train)
-        prediction = grid_svm.predict(x_test)
+        prediction, best_svm = svmTunedAlgorithm(x_train, y_train, x_test)
         end_time = time.time() - start
 
         accuracy = accuracy_score(y_test, prediction)
         results.append({
             'dataset': name,
             'model': 'svm-tuned',
-            'config': str(grid_svm.best_params_),
+            'config': str(best_svm),
             'fold': i,
             'accuracy': accuracy,
             'time': end_time
         })
 
-        grid_rf = GridSearchCV(
-            RandomForestClassifier(criterion='gini', random_state=42),
-            param_grid_rf, cv=5, scoring='accuracy', n_jobs=-1
-        )
         start = time.time()
-        grid_rf.fit(x_train, y_train)
-        prediction = grid_rf.predict(x_test)
+        prediction, best_rf = rfTunedAlgorithm(x_train, y_train, x_test)
         end_time = time.time() - start
 
         accuracy = accuracy_score(y_test, prediction)
         results.append({
             'dataset': name,
             'model': 'RF-tuned',
-            'config': str(grid_rf.best_params_),
+            'config': str(best_rf),
             'fold': i,
             'accuracy': accuracy,
             'time': end_time

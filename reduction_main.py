@@ -3,9 +3,10 @@ sample reduction techniques, evaluated on kNN, SVM and Random Forest.
 """
 
 import time
+from pathlib import Path
+
+import numpy as np
 import pandas as pd
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 from data_loader import load_fold
@@ -13,8 +14,8 @@ from fcnn import condense
 from ennth import reduce_ennth
 from drop3 import reduce_drop3
 from knn import kNNAlgorithm
-import numpy as np
-from pathlib import Path
+from svm import svmAlgorithm
+from rf import rfAlgorithm
 
 BEST_KNN = {
     'pima-indians': ('euclidean', 7, 'majority', 'OG'),
@@ -24,7 +25,7 @@ BEST_KNN = {
 # Map of reduction methods to ensure uniform loop execution
 REDUCTION_METHODS = {
     'FCNN': condense,
-    'ENNth': reduce_ennth,
+    'ENNTh': reduce_ennth,
     'DROP3': reduce_drop3
 }
 
@@ -41,7 +42,7 @@ for name in datasets:
         original_size = len(x_train)
 
         for red_name, red_func in REDUCTION_METHODS.items():
-            
+
             # --- Perform Reduction ---
             start_red = time.time()
             x_train_red, y_train_red = red_func(x_train, y_train, metric=dist)
@@ -68,10 +69,12 @@ for name in datasets:
             })
 
             # --- Evaluate SVM ---
-            svm_model = SVC(kernel='rbf', random_state=42)
+            # Same configuration as the unreduced baseline in main.py
+            # (RBF kernel, default C and gamma), so that the only thing
+            # that changes is the training set.
             start_svm = time.time()
-            svm_model.fit(x_train_red, y_train_red)
-            pred_svm = svm_model.predict(x_test)
+            pred_svm = svmAlgorithm(x_train_red, y_train_red, x_test,
+                                    kernel='rbf')
             time_svm = time.time() - start_svm
 
             results.append({
@@ -81,10 +84,11 @@ for name in datasets:
             })
 
             # --- Evaluate Random Forest ---
-            rf_model = RandomForestClassifier(n_estimators=100, criterion='gini', random_state=42)
+            # Same configuration as the unreduced baseline in main.py
+            # (100 trees, gini).
             start_rf = time.time()
-            rf_model.fit(x_train_red, y_train_red)
-            pred_rf = rf_model.predict(x_test)
+            pred_rf = rfAlgorithm(x_train_red, y_train_red, x_test,
+                                  n_estimators=100, criterion='gini')
             time_rf = time.time() - start_rf
 
             results.append({

@@ -143,8 +143,6 @@ def drop3(X, y, metric='euclidean', k=1):
             continue
 
         # Accuracy of associates with p present
-
-        # Accuracy of associates with p present
         acc_with_p = sum(
             1 for a in associates if _classify(D, y_arr, active_mask, a, k=k) == y_arr[a]
         )
