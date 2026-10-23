@@ -4,12 +4,12 @@ Both functions have the same signature, so the kNN core can swap them:
 
     vote(neighbors) -> predicted class
 
-where `neighbors` is a list of (distance, class_label) tuples, one per
+where 'neighbours' is a list of (distance, class_label) tuples, one per
 retrieved neighbour (the K nearest ones). The list does not need to be sorted.
 """
 import math
 
-EPS = 1e-12  # distances <= EPS are treated as "exactly zero"
+EPS = 1e-12  # distances smaller than EPS are treated as "exactly zero"
 
 
 def _break_tie(tied_labels, neighbors):
@@ -45,8 +45,7 @@ def inverse_distance_vote(neighbors, p=1):
     """Inverse distance weighted vote: each neighbour votes with weight 1 / distance**p.
 
     Zero-distance case: if one or more neighbours are at distance 0 (identical to
-    the query), their weight would be infinite, so only those neighbours vote
-    (one vote each, i.e. majority among them).
+    the query), their weight would be infinite, so only those neighbours vote.
     """
     zero = [(d, label) for d, label in neighbors if d <= EPS]
     if zero:
