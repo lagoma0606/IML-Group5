@@ -19,7 +19,7 @@ FIGURES_DIR = BASE_DIR / 'figures'
 FIGURES_DIR.mkdir(exist_ok=True)
 
 DATASETS = ['pima-indians', 'mx']
-TECHNIQUES = ['FCNN', 'EENN', 'DROP3']
+TECHNIQUES = ['FCNN', 'ENNTh', 'DROP3']
 
 # The kNN the reduction is applied to, and the two baselines section 14
 # compares the reduced training sets against.
