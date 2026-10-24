@@ -87,28 +87,31 @@ for name in ['pima-indians', 'mx']:
         print(pivot.mean().round(4))
         print()
 
-
 # ------------------------------------------------------------------
 # 3. SVM kernels
 # ------------------------------------------------------------------
-# Each fold is treated as a dataset, as the lecturer indicated.
-# Two kernels, so Wilcoxon applies rather than Friedman.
+# We evaluate Linear vs RBF vs Tuned RBF simultaneously using the Friedman test.
+# The friedman_with_ranks function will apply the Nemenyi post-hoc test (critical difference)
+# to determine if the tuned model actually outperforms the others significantly.
+
 for name in ['pima-indians', 'mx']:
     svm = df[(df['model'] == 'svm') & (df['dataset'] == name)]
 
-    # sort_values('fold') is essential: Wilcoxon is a paired test, it compares
-    # fold 0 against fold 0, fold 1 against fold 1. If the two vectors arrived
-    # in a different order, the pairing would be wrong.
+    # sort_values('fold') is essential to ensure the vectors are correctly paired for the test
     linear = svm[svm['config'] == 'linear'].sort_values('fold')['accuracy'].values
     rbf = svm[svm['config'] == 'rbf'].sort_values('fold')['accuracy'].values
 
-    stat, p = wilcoxon(linear, rbf)
+    # The tuned SVM (grid search) is stored as its own model, so it is read separately
+    tuned = df[(df['model'] == 'svm-tuned') & (df['dataset'] == name)]
+    tuned_accuracy = tuned.sort_values('fold')['accuracy'].values
 
-    print('---', name, '- SVM kernel ---')
-    print('linear:', round(linear.mean(), 4))
-    print('rbf   :', round(rbf.mean(), 4))
-    print('Wilcoxon p-value:', format(p, '.4g'))
-    print()
+    # Create a pivot dataframe with the 3 variants and run Friedman + Nemenyi
+    pivot = pd.DataFrame({'linear': linear, 'rbf': rbf, 'tuned': tuned_accuracy})
+
+    friedman_with_ranks(pivot, name + ' - SVM linear vs rbf vs tuned - accuracy', True)
+
+    print('mean accuracy:')
+    print(pivot.mean().round(4).to_string())
 
 
 # ------------------------------------------------------------------

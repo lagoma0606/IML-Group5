@@ -114,6 +114,14 @@ def with_rf_params(df):
     rf['criterion'] = criterion
     return rf
 
+def with_svm_combined(df):
+    """Combines 'svm' and 'svm-tuned' to compare all three configs with Friedman."""
+    svm = df[df['model'].isin(['svm', 'svm-tuned'])].copy()
+    # Cambiamos el string largo de los hiperparámetros del tuneado por 'tuned'
+    # para que actúe como un tercer nivel limpio junto a 'linear' y 'rbf'.
+    svm.loc[svm['model'] == 'svm-tuned', 'config'] = 'tuned'
+    return svm
+
 
 # ----------------------------------------------------------------------
 # Figures
@@ -335,6 +343,11 @@ def paired_lines(df):
         ('RF', rf, 'criterion', 'gini', 'entropy'),
         ('SVM', svm, 'config', 'linear', 'rbf'),
     ]
+    # (model, its rows, the column holding the two levels, first, second)
+    comparisons = [
+        ('kNN', knn, 'voting', 'majority', 'inverse_distance'),
+        ('RF', rf, 'criterion', 'gini', 'entropy'),
+    ]
 
     lines = ['## Paired comparisons (Wilcoxon)', '']
     lines.append('| Dataset | Model | Metric | Comparison '
@@ -434,6 +447,7 @@ def summary_tables(df):
     groups = [
         ('kNN', df[df['model'] == 'kNN'], PARAMS),
         ('RF', with_rf_params(df), ['n_estimators']),
+        ('SVM', with_svm_combined(df), ['config']),
     ]
 
     lines = ['## Friedman tests', '']
