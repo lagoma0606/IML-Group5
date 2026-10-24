@@ -161,3 +161,43 @@ for name in ['pima-indians', 'mx']:
             print('Wilcoxon p-value:', format(p, '.4g'))
         print(pivot.mean().round(4))
         print()
+
+
+
+
+# ------------------------------------------------------------------
+# 5. The best kNN against SVM and Random Forest
+# ------------------------------------------------------------------
+# Three methods, so Friedman applies.
+#
+# Where several configurations were statistically indistinguishable, the
+# simplest and fastest was kept: on pima-indians the distance made no
+# significant difference (p = 0.112) and on mx the four non-IVDM metrics tie
+# at mean rank 2.50, so the Euclidean one was chosen.
+#
+# (label, model in results.csv, configuration)
+BEST = [
+    ('kNN', 'kNN', 'euclidean_k7_majority_OG'),
+    ('SVM', 'svm', 'rbf'),
+    ('RF', 'RF', '100_gini'),
+]
+
+# Storage does not apply here: only the kNN keeps a case base.
+CROSS_METRICS = [('accuracy', True), ('time', False)]
+
+for name in ['pima-indians', 'mx']:
+    for metric, higher_is_better in CROSS_METRICS:
+        columns = {}
+        for label, model, config in BEST:
+            rows = df[(df['dataset'] == name)
+                      & (df['model'] == model)
+                      & (df['config'] == config)].sort_values('fold')
+            columns[label] = rows[metric].values
+
+        pivot = pd.DataFrame(columns)
+
+        friedman_with_ranks(pivot, name + ' - kNN vs SVM vs RF - ' + metric,
+                            higher_is_better)
+        print('mean', metric + ':')
+        print(pivot.mean().round(4).to_string())
+        print()

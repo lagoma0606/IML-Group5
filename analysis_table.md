@@ -119,3 +119,27 @@
 | mx | kNN | time | majority vs inverse_distance | 3.2461 | 3.2385 | 0.9219 |
 | mx | RF | time | gini vs entropy | 0.1987 | 0.1969 | 0.9219 |
 | mx | SVM | time | linear vs rbf | 0.0829 | 0.0713 | 0.009766 |
+
+## kNN vs SVM vs RF (best configuration of each)
+
+### accuracy
+
+| Dataset | Method | Mean | Std | Mean rank | Friedman p | CD | Within CD of best |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| pima-indians | RF | 0.7657 | 0.0403 | 1.75 | 0.549 | 1.05 | yes |
+| pima-indians | SVM | 0.7646 | 0.0315 | 2.05 | 0.549 | 1.05 | yes |
+| pima-indians | kNN | 0.7567 | 0.0448 | 2.2 | 0.549 | 1.05 | yes |
+| mx | RF | 1.0 | 0.0 | 1.35 | 8.58e-05 | 1.05 | yes |
+| mx | SVM | 0.9971 | 0.0053 | 1.65 | 8.58e-05 | 1.05 | yes |
+| mx | kNN | 0.9814 | 0.0079 | 3.0 | 8.58e-05 | 1.05 | no |
+
+### time
+
+| Dataset | Method | Mean | Std | Mean rank | Friedman p | CD | Within CD of best |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| pima-indians | SVM | 0.0155 | 0.0065 | 1.0 | 0.000112 | 1.05 | yes |
+| pima-indians | RF | 0.2399 | 0.1076 | 2.1 | 0.000112 | 1.05 | no |
+| pima-indians | kNN | 0.2943 | 0.1572 | 2.9 | 0.000112 | 1.05 | no |
+| mx | SVM | 0.0713 | 0.0043 | 1.0 | 4.54e-05 | 1.05 | yes |
+| mx | RF | 0.2139 | 0.0259 | 2.0 | 4.54e-05 | 1.05 | yes |
+| mx | kNN | 2.0989 | 0.1075 | 3.0 | 4.54e-05 | 1.05 | no |

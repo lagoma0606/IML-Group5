@@ -23,6 +23,14 @@ PARAMS = ['distance', 'k', 'retention']
 # (metric, higher is better)
 METRICS = [('accuracy', True), ('time', False), ('storage_pct', False)]
 
+# The best configuration of each algorithm, compared against each other:
+# (label, model in results.csv, configuration).
+BEST = [
+    ('kNN', 'kNN', 'euclidean_k7_majority_OG'),
+    ('SVM', 'svm', 'rbf'),
+    ('RF', 'RF', '100_gini'),
+]
+
 COLOURS = ['#0072B2', '#D55E00', '#009E73', '#E69F00', '#CC79A7']
 MARKERS = ['o', 's', '^', 'D', 'v']
 
@@ -368,6 +376,58 @@ def paired_lines(df):
     return lines
 
 
+def cross_lines(df):
+    """The best kNN, SVM and Random Forest against each other.
+
+    Three methods, so Friedman applies. Each fold is one observation, as in
+    the rest of the tables. Storage is left out: only the kNN keeps a case
+    base.
+    """
+    lines = ['## kNN vs SVM vs RF (best configuration of each)', '']
+
+    for metric, higher_is_better in METRICS:
+        if metric == 'storage_pct':
+            continue
+
+        lines.append('### ' + metric)
+        lines.append('')
+        lines.append('| Dataset | Method | Mean | Std | Mean rank '
+                     '| Friedman p | CD | Within CD of best |')
+        lines.append('| --- | --- | --- | --- | --- | --- | --- | --- |')
+
+        for dataset in DATASETS:
+            columns = {}
+            for label, model, config in BEST:
+                rows = df[(df['dataset'] == dataset)
+                          & (df['model'] == model)
+                          & (df['config'] == config)].sort_values('fold')
+                columns[label] = rows[metric].values
+
+            pivot = pd.DataFrame(columns)
+            ranks = mean_ranks(pivot, higher_is_better)
+            p = friedman_p(pivot)
+            cd = critical_difference(pivot.shape[1], pivot.shape[0])
+            best = ranks.iloc[0]
+
+            for label in ranks.index:
+                if ranks[label] <= best + cd:
+                    verdict = 'yes'
+                else:
+                    verdict = 'no'
+
+                lines.append('| ' + dataset
+                             + ' | ' + label
+                             + ' | ' + str(round(pivot[label].mean(), 4))
+                             + ' | ' + str(round(pivot[label].std(), 4))
+                             + ' | ' + str(round(ranks[label], 2))
+                             + ' | ' + format(p, '.3g')
+                             + ' | ' + str(round(cd, 2))
+                             + ' | ' + verdict + ' |')
+        lines.append('')
+
+    return lines
+
+
 def summary_tables(df):
     """One row per level of each parameter, as markdown ready to paste."""
     # (model, its rows, the parameters with three or more levels)
@@ -418,6 +478,9 @@ def summary_tables(df):
         lines.append('')
 
     for line in paired_lines(df):
+        lines.append(line)
+
+    for line in cross_lines(df):
         lines.append(line)
 
     TABLE_FILE.write_text('\n'.join(lines), encoding='utf-8')
