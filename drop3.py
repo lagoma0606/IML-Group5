@@ -60,9 +60,14 @@ def _enn_filter(D, y, k=3):
 
 
 def _find_associates(D, y, active_mask, k=3):
-    """Find associates for all active instances.
+    """Find the associates of every active instance.
 
-    An instance 'a' is an associate of instance 'p' if 'p' is one of 'a's k-NNs.
+    An instance 'a' is an associate of 'p' if 'p' is one of the k nearest
+    neighbours of 'a' among the instances still in S. As in DROP2 (and so in
+    DROP3), 'a' ranges over the whole original training set T, including the
+    instances already removed, so that removing p is judged on every instance
+    it affects and not only on the ones that remain (Wilson & Martinez, 2000).
+
     Returns dict: { instance_index: set_of_associate_indices }
     """
     active_indices = np.where(active_mask)[0]
