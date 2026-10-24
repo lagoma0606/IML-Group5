@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 --- pima-indians kNN - accuracy ---
+=======
+﻿--- pima-indians kNN - accuracy ---
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 Friedman p-value: 0.163  CD: 1.48
 mean accuracy:
 kNN (without reduction)    0.7567
@@ -16,9 +20,15 @@ within CD of the best: 4 of 4
 Friedman p-value: 6.61e-06  CD: 1.48
 mean time:
 kNN (without reduction)    0.2943
+<<<<<<< HEAD
 DROP3                      0.0443
 ENNTh                      0.1976
 FCNN                       0.1390
+=======
+DROP3                      0.0331
+ENNTh                      0.1305
+FCNN                       0.1039
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 mean rank:
 DROP3                      1.0
 FCNN                       2.2
@@ -29,10 +39,17 @@ within CD of the best: 2 of 4
 --- pima-indians kNN - time including reduction ---
 Friedman p-value: 2.33e-06  CD: 1.48
 mean time including reduction:
+<<<<<<< HEAD
 kNN (without reduction)     0.2943
 DROP3                      12.1105
 ENNTh                       2.1054
 FCNN                        0.1655
+=======
+kNN (without reduction)    0.2943
+DROP3                      7.5346
+ENNTh                      1.3953
+FCNN                       0.1300
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 mean rank:
 FCNN                       1.1
 kNN (without reduction)    1.9
@@ -69,6 +86,7 @@ DROP3                      3.0
 within CD of the best: 4 of 4
 
 --- pima-indians SVM - time ---
+<<<<<<< HEAD
 Friedman p-value: 3.49e-06  CD: 1.48
 mean time:
 SVM (without reduction)    0.0155
@@ -78,11 +96,23 @@ FCNN                       0.0074
 mean rank:
 DROP3                      1.2
 ENNTh                      1.8
+=======
+Friedman p-value: 5.56e-06  CD: 1.48
+mean time:
+SVM (without reduction)    0.0155
+DROP3                      0.0022
+ENNTh                      0.0027
+FCNN                       0.0051
+mean rank:
+DROP3                      1.4
+ENNTh                      1.6
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 FCNN                       3.0
 SVM (without reduction)    4.0
 within CD of the best: 2 of 4
 
 --- pima-indians SVM - time including reduction ---
+<<<<<<< HEAD
 Friedman p-value: 1.38e-06  CD: 1.48
 mean time including reduction:
 SVM (without reduction)     0.0155
@@ -92,6 +122,17 @@ FCNN                        0.0339
 mean rank:
 SVM (without reduction)    1.0
 FCNN                       2.0
+=======
+Friedman p-value: 3.49e-06  CD: 1.48
+mean time including reduction:
+SVM (without reduction)    0.0155
+DROP3                      7.5037
+ENNTh                      1.2674
+FCNN                       0.0312
+mean rank:
+SVM (without reduction)    1.2
+FCNN                       1.8
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 ENNTh                      3.0
 DROP3                      4.0
 within CD of the best: 2 of 4
@@ -111,6 +152,7 @@ FCNN                      3.75
 within CD of the best: 3 of 4
 
 --- pima-indians RF - time ---
+<<<<<<< HEAD
 Friedman p-value: 0.0235  CD: 1.48
 mean time:
 RF (without reduction)    0.2399
@@ -134,6 +176,31 @@ FCNN                       0.2836
 mean rank:
 RF (without reduction)    1.2
 FCNN                      1.8
+=======
+Friedman p-value: 0.00116  CD: 1.48
+mean time:
+RF (without reduction)    0.2399
+DROP3                     0.1260
+ENNTh                     0.1414
+FCNN                      0.1446
+mean rank:
+DROP3                     1.4
+ENNTh                     2.4
+FCNN                      2.5
+RF (without reduction)    3.7
+within CD of the best: 3 of 4
+
+--- pima-indians RF - time including reduction ---
+Friedman p-value: 4.67e-06  CD: 1.48
+mean time including reduction:
+RF (without reduction)    0.2399
+DROP3                     7.6275
+ENNTh                     1.4062
+FCNN                      0.1707
+mean rank:
+FCNN                      1.3
+RF (without reduction)    1.7
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 ENNTh                     3.0
 DROP3                     4.0
 within CD of the best: 2 of 4
@@ -153,6 +220,7 @@ DROP3                      3.85
 within CD of the best: 2 of 4
 
 --- mx kNN - time ---
+<<<<<<< HEAD
 Friedman p-value: 5.6e-05  CD: 1.48
 mean time:
 kNN (without reduction)    2.0989
@@ -176,6 +244,31 @@ FCNN                         2.0936
 mean rank:
 kNN (without reduction)    1.3
 FCNN                       1.7
+=======
+Friedman p-value: 2.33e-06  CD: 1.48
+mean time:
+kNN (without reduction)    2.0989
+DROP3                      0.4225
+ENNTh                      1.7368
+FCNN                       0.6037
+mean rank:
+DROP3                      1.0
+FCNN                       2.0
+ENNTh                      3.1
+kNN (without reduction)    3.9
+within CD of the best: 2 of 4
+
+--- mx kNN - time including reduction ---
+Friedman p-value: 1.38e-06  CD: 1.48
+mean time including reduction:
+kNN (without reduction)     2.0989
+DROP3                      79.5240
+ENNTh                      12.9037
+FCNN                        0.6994
+mean rank:
+FCNN                       1.0
+kNN (without reduction)    2.0
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 ENNTh                      3.0
 DROP3                      4.0
 within CD of the best: 2 of 4
@@ -209,26 +302,47 @@ DROP3                      3.90
 within CD of the best: 2 of 4
 
 --- mx SVM - time ---
+<<<<<<< HEAD
 Friedman p-value: 1.87e-05  CD: 1.48
 mean time:
 SVM (without reduction)    0.0713
 DROP3                      0.0384
 ENNTh                      0.1311
 FCNN                       0.0513
+=======
+Friedman p-value: 2.33e-06  CD: 1.48
+mean time:
+SVM (without reduction)    0.0713
+DROP3                      0.0123
+ENNTh                      0.0437
+FCNN                       0.0158
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 mean rank:
 DROP3                      1.2
 FCNN                       1.9
+<<<<<<< HEAD
 SVM (without reduction)    3.1
 ENNTh                      3.8
+=======
+ENNTh                      3.0
+SVM (without reduction)    4.0
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 within CD of the best: 2 of 4
 
 --- mx SVM - time including reduction ---
 Friedman p-value: 1.38e-06  CD: 1.48
 mean time including reduction:
+<<<<<<< HEAD
 SVM (without reduction)      0.0713
 DROP3                      220.3433
 ENNTh                       33.0594
 FCNN                         0.3121
+=======
+SVM (without reduction)     0.0713
+DROP3                      79.1138
+ENNTh                      11.2106
+FCNN                        0.1115
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 mean rank:
 SVM (without reduction)    1.0
 FCNN                       2.0
@@ -249,6 +363,7 @@ FCNN                      1.85
 ENNTh                     3.45
 DROP3                     3.55
 within CD of the best: 2 of 4
+<<<<<<< HEAD
 
 --- mx RF - time ---
 Friedman p-value: 8.86e-05  CD: 1.48
@@ -257,6 +372,30 @@ RF (without reduction)    0.2139
 DROP3                     0.4648
 ENNTh                     0.5349
 FCNN                      0.4623
+=======
+
+--- mx RF - time ---
+Friedman p-value: 2.23e-05  CD: 1.48
+mean time:
+RF (without reduction)    0.2139
+DROP3                     0.1418
+ENNTh                     0.1783
+FCNN                      0.1532
+mean rank:
+DROP3                     1.4
+FCNN                      1.8
+ENNTh                     2.8
+RF (without reduction)    4.0
+within CD of the best: 3 of 4
+
+--- mx RF - time including reduction ---
+Friedman p-value: 2.33e-06  CD: 1.48
+mean time including reduction:
+RF (without reduction)     0.2139
+DROP3                     79.2434
+ENNTh                     11.3452
+FCNN                       0.2489
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
 mean rank:
 RF (without reduction)    1.0
 FCNN                      2.6
@@ -281,6 +420,7 @@ within CD of the best: 2 of 4
 --- storage and cost ---
                         storage_pct  final_storage_pct  time_reduction  time_inference
 dataset      reduction                                                                
+<<<<<<< HEAD
 mx           DROP3            28.65              11.52          220.30            1.58
              ENNTh            84.97              64.83           32.93            5.17
              FCNN             33.60              16.76            0.26            1.83
@@ -289,3 +429,13 @@ pima-indians DROP3            19.54               7.29           12.07          
              FCNN             46.54              25.06            0.03            0.14
 
 Figures written to /home/angela/PycharmProjects/Work 2/IML-Group5/figures
+=======
+mx           DROP3            28.65              11.52           79.10            0.42
+             ENNTh            84.97              64.83           11.17            1.74
+             FCNN             33.60              16.76            0.10            0.60
+pima-indians DROP3            19.54               7.29            7.50            0.03
+             ENNTh            60.29              44.59            1.26            0.13
+             FCNN             46.54              25.06            0.03            0.10
+
+Figures written to C:\Users\danie\PycharmProjects\IML-Group5\figures
+>>>>>>> de574ac (Re-run the reduction experiments after merging the new reduction code)
