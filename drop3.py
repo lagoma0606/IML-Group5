@@ -68,7 +68,7 @@ def _find_associates(D, y, active_mask, k=3):
     active_indices = np.where(active_mask)[0]
     associates = {i: set() for i in active_indices}
 
-    for a in active_indices:
+    for a in range(len(y)):
         nn = _get_k_nearest_neighbors(D, active_mask, a, k)
         for p in nn:
             if p in associates:

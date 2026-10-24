@@ -1,7 +1,7 @@
 import numpy as np
 from distance import get_distance
 
-def wilson_prob_keep(D, yi, k=7, threshold=0.5):
+def wilson_prob_keep(D, yi, k=7, threshold=0.7):
     """Core ENN boolean mask generator."""
     n = len(yi)
     kk = min(k, n - 1)
@@ -54,6 +54,6 @@ def reduce_ennth(x_train, y_train, metric):
 
     unique_labels, y_mapped = np.unique(y_tr_arr, return_inverse=True)
 
-    keep_mask = wilson_prob_keep(D_train, y_mapped, k=7, threshold=0.5)
+    keep_mask = wilson_prob_keep(D_train, y_mapped, k=7, threshold=0.7)
 
     return x_tr_arr[keep_mask], y_tr_arr[keep_mask]

@@ -10,9 +10,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 
 from data_loader import load_fold
-from fcnn import condense
-from ennth import reduce_ennth
-from drop3 import reduce_drop3
+from reduction_knn import REDUCTIONS, reduce_training_set
 from knn import kNNAlgorithm
 from svm import svmAlgorithm
 from rf import rfAlgorithm
@@ -20,13 +18,6 @@ from rf import rfAlgorithm
 BEST_KNN = {
     'pima-indians': ('euclidean', 7, 'majority', 'OG'),
     'mx':           ('euclidean', 7, 'majority', 'OG'),
-}
-
-# Map of reduction methods to ensure uniform loop execution
-REDUCTION_METHODS = {
-    'FCNN': condense,
-    'ENNTh': reduce_ennth,
-    'DROP3': reduce_drop3
 }
 
 datasets = ['pima-indians', 'mx']
@@ -41,11 +32,11 @@ for name in datasets:
         x_test = np.asarray(x_test)
         original_size = len(x_train)
 
-        for red_name, red_func in REDUCTION_METHODS.items():
+        for red_name in REDUCTIONS:
 
             # --- Perform Reduction ---
             start_red = time.time()
-            x_train_red, y_train_red = red_func(x_train, y_train, metric=dist)
+            x_train_red, y_train_red = reduce_training_set(x_train, y_train, red_name, dist)
             time_red = time.time() - start_red
 
             storage_pct = len(x_train_red) / original_size * 100.0
