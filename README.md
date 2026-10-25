@@ -66,6 +66,30 @@ The four classifiers the assignment names each live in their own module:
 | `rfAlgorithm`, `rfTunedAlgorithm` | `rf.py` |
 | `reduction_kNNAlgorithm` | `reduction_knn.py` |
 
+### How the files fit together
+
+    main.py
+     ├── data_loader.load_fold()  → Preprocessor (fit on train, transform train and test)
+     ├── knn.kNNAlgorithm()       → distance.py, ivdm.IVDM, voting.VOTING
+     ├── svm.svmAlgorithm(), svm.svmTunedAlgorithm()
+     └── rf.rfAlgorithm(), rf.rfTunedAlgorithm()
+
+    reduction_main.py
+     ├── data_loader.load_fold()
+     ├── reduction_knn.reduction_kNNAlgorithm()
+     │    ├── reduce_training_set() → fcnn.condense / ennth.reduce_ennth / drop3.reduce_drop3
+     │    └── knn.kNNAlgorithm()
+     ├── svm.svmAlgorithm()        (on the reduced training set)
+     └── rf.rfAlgorithm()          (on the reduced training set)
+
+    analysis.py, plots.py, reduction_analysis.py, reduction_table.py
+     └── read results.csv and reduction_results.csv; analysis.py and the two
+         reduction scripts reuse the critical-difference helpers in plots.py
+
+For each fold, the entry point loads and preprocesses the data once, then runs
+every configuration on it. The two experiment scripts write the CSV files, and
+the analysis scripts only read them.
+
 Generating results and analysing them are deliberately kept apart: the two
 experiment scripts take hours, the four analysis scripts take seconds, so
 the same results can be re-analysed without relaunching anything.
@@ -124,6 +148,23 @@ python -m pip install -r requirements.txt
 Run the experiments with the environment active, and `deactivate` when
 finished.
 
+## Entry points
+
+There are six executable files, all in the `code` folder. Every command is
+run from the `code` folder.
+
+| File | Purpose | Command |
+| --- | --- | --- |
+| `code/main.py` | kNN (120 configurations), SVM and Random Forest experiments over the 10 folds of both datasets | `python main.py` (optional flags in *Parameters*) |
+| `code/reduction_main.py` | Instance reduction experiments: FCNN, ENNTh and DROP3 with the best kNN, the SVM and the Random Forest | `python reduction_main.py` (optional flags in *Parameters*) |
+| `code/analysis.py` | Friedman, Nemenyi and Wilcoxon tests on `results.csv` | `python analysis.py` |
+| `code/plots.py` | Figures and summary tables from `results.csv` | `python plots.py` |
+| `code/reduction_analysis.py` | Friedman and Nemenyi tests and figures for the reduction experiments | `python reduction_analysis.py` |
+| `code/reduction_table.py` | Table of the SVM and RF reduction results | `python reduction_table.py` |
+
+The other `.py` files are modules imported by these six and are not run
+directly.
+
 ## Execution order
 
 The order matters: each analysis step reads a file an earlier step wrote.
@@ -172,7 +213,9 @@ hardware, and runtime is one of the three metrics being evaluated (see also
 `main.py` takes optional arguments that narrow the run. **With no arguments
 it runs every experiment and writes `results.csv`, which is how the results
 in the report were produced.** All arguments are optional and introduced
-with a flag; there are no positional arguments.
+with a flag; there are no positional arguments. The flags can be given in any
+order, and a flag that takes several values lists them separated by spaces
+(for example `--k 5 7`).
 
 | Flag | Type | Valid values | Default |
 | --- | --- | --- | --- |
@@ -212,8 +255,9 @@ to run and which file it will write, before it starts.
 
 `python main.py --help` prints the same list of options.
 
-`reduction_main.py` takes the same kind of optional arguments. With no
-arguments it runs every reduction experiment and writes
+`reduction_main.py` takes the same kind of optional arguments: all of them
+are flags, there are no positional arguments, and they can be given in any
+order. With no arguments it runs every reduction experiment and writes
 `reduction_results.csv`, as in the report. The kNN configuration is always
 the one named in its `BEST_KNN` constant (Euclidean, k = 7, majority, OG).
 
