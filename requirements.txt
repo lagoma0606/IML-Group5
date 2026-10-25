@@ -1,5 +1,10 @@
-numpy>=2.0
-scipy>=1.14
-pandas>=2.2
-scikit-learn>=1.5
-matplotlib>=3.9
+# Versions pinned to the environment the reported results were produced in.
+# On Mx the binary attributes leave few distinct distances, so many training
+# instances tie with the k-th neighbour and the tie order depends on the
+# sorting NumPy performs. Pinning keeps every reported figure reproducible.
+# Tested with Python 3.11.9.
+numpy==2.4.6
+scipy==1.17.1
+pandas==3.0.6
+scikit-learn==1.9.1
+matplotlib==3.11.2
