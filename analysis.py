@@ -1,8 +1,10 @@
+from pathlib import Path
+
 import pandas as pd
 from scipy.stats import wilcoxon, friedmanchisquare
 from plots import critical_difference
 
-df = pd.read_csv('results.csv')
+df = pd.read_csv(Path(__file__).parent / 'results.csv')
 knn = df[df['model'] == 'kNN']
 
 
