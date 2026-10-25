@@ -1,8 +1,14 @@
 # IML Group 5 — Work 2
-
 A k-Nearest Neighbour (K-IBL) classifier written from scratch, compared
 against SVM and Random Forest on two datasets with 10-fold cross-validation,
 with and without instance reduction of the training set.
+
+## Team
+
+- Azel Akhmetova
+- Daniel Gómez Vargas
+- Marcos Jaimes Martínez
+- Ángela Matute de Imaña
 
 ## Setup
 
@@ -13,7 +19,10 @@ source .venv/bin/activate        # macOS / Linux
 pip install -r requirements.txt
 ```
 
-Python 3.11, as the assignment requires.
+## Environment
+
+- Python 3.11
+- Tested on Windows 11
 
 ## Running the code
 

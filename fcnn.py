@@ -128,9 +128,6 @@ def _fcnn_sorted(X, y, D, metric):
 def fcnn(X, y, D, metric='euclidean'):
     """FCNN1 rule (Angiulli 2007, Fig. 5). Returns the sorted indices of the
     kept instances, referring to the original row order of X.
-
-    k=1 gives the basic rule.
-    k>1 uses the extension of Section 3.3: S is consistent with the k-NN rule.
     """
     X = np.asarray(X, dtype=float)
     y = np.asarray(y)
