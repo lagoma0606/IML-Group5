@@ -1,6 +1,13 @@
+from pathlib import Path
+
 from scipy.io import arff
 import pandas as pd
 from preprocessor import Preprocessor
+
+# The datasets are found relative to this file, not to the directory the
+# script happens to be launched from, so every entry point works from
+# anywhere once the project is cloned.
+DATA_DIR = Path(__file__).parent / 'data'
 
 # Pre-dataset configuration: columns where a 0 means 'not measured'.
 # It lives here so main.py does not need to know anything about the
@@ -20,11 +27,11 @@ def load_fold(dataset, i):
     If the implementation changes, only its body changes: the rest of the
     project does not notice.
     """
-    train_path = f"data/{dataset}/{dataset}.fold.{i:06d}.train.arff"
-    test_path = f"data/{dataset}/{dataset}.fold.{i:06d}.test.arff"
+    train_path = DATA_DIR / dataset / f"{dataset}.fold.{i:06d}.train.arff"
+    test_path = DATA_DIR / dataset / f"{dataset}.fold.{i:06d}.test.arff"
 
-    data_train, meta_train = arff.loadarff(train_path)
-    data_test, meta_test = arff.loadarff(test_path)
+    data_train, meta_train = arff.loadarff(str(train_path))
+    data_test, meta_test = arff.loadarff(str(test_path))
 
     df_train = pd.DataFrame(data_train)
     df_test = pd.DataFrame(data_test)

@@ -10,8 +10,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 
 from data_loader import load_fold
-from reduction_knn import REDUCTIONS, reduce_training_set
-from knn import kNNAlgorithm
+from reduction_knn import REDUCTIONS, reduction_kNNAlgorithm
 from svm import svmAlgorithm
 from rf import rfAlgorithm
 
@@ -34,20 +33,15 @@ for name in datasets:
 
         for red_name in REDUCTIONS:
 
-            # --- Perform Reduction ---
-            start_red = time.time()
-            x_train_red, y_train_red = reduce_training_set(x_train, y_train, red_name, dist)
-            time_red = time.time() - start_red
+            # --- Reduce the training set, then classify with the kNN ---
+            (pred_knn, final_size, x_train_red, y_train_red,
+             time_red, time_knn) = reduction_kNNAlgorithm(
+                x_train, y_train, x_test, y_test,
+                k=k, distance=dist, voting=voting, retention=retention,
+                types=types, reduction=red_name
+            )
 
             storage_pct = len(x_train_red) / original_size * 100.0
-
-            # --- Evaluate k-NN ---
-            start_knn = time.time()
-            pred_knn, final_size = kNNAlgorithm(
-                x_train_red, y_train_red, x_test, y_test,
-                k=k, distance=dist, voting=voting, retention=retention, types=types
-            )
-            time_knn = time.time() - start_knn
 
             results.append({
                 'dataset': name, 'fold': i, 'reduction': red_name, 'model': 'kNN',
@@ -71,7 +65,8 @@ for name in datasets:
             results.append({
                 'dataset': name, 'fold': i, 'reduction': red_name, 'model': 'SVM',
                 'accuracy': accuracy_score(y_test, pred_svm),
-                'time_reduction': time_red, 'time_inference': time_svm, 'storage_pct': storage_pct
+                'time_reduction': time_red, 'time_inference': time_svm,
+                'storage_pct': storage_pct
             })
 
             # --- Evaluate Random Forest ---
@@ -85,12 +80,14 @@ for name in datasets:
             results.append({
                 'dataset': name, 'fold': i, 'reduction': red_name, 'model': 'RF',
                 'accuracy': accuracy_score(y_test, pred_rf),
-                'time_reduction': time_red, 'time_inference': time_rf, 'storage_pct': storage_pct
+                'time_reduction': time_red, 'time_inference': time_rf,
+                'storage_pct': storage_pct
             })
 
 df_results = pd.DataFrame(results)
 df_results.to_csv(Path(__file__).parent / 'reduction_results.csv', index=False)
 
 print("\n=== Results Summary (Means) ===")
-summary = df_results.groupby(['dataset', 'reduction', 'model'])[['accuracy', 'time_inference', 'storage_pct']].mean()
+summary = df_results.groupby(['dataset', 'reduction', 'model'])[
+    ['accuracy', 'time_inference', 'storage_pct']].mean()
 print(summary.round(4))

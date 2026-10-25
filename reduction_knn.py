@@ -5,6 +5,8 @@ drop3.py) and the classifier in knn.py. This module only chains them:
 first reduce the TrainMatrix, then classify the TestMatrix with the kNN.
 """
 
+import time
+
 from fcnn import condense
 from ennth import reduce_ennth
 from drop3 import reduce_drop3
@@ -54,20 +56,29 @@ def reduction_kNNAlgorithm(x_train, y_train, x_test, y_test, k, distance,
     ('FCNN', 'ENNTh', 'DROP3' or 'none'). The reduction uses the same
     distance as the kNN.
 
-    Returns (predictions, reduced_size, case_base_size):
-      predictions    predicted class of each test instance
-      reduced_size   training instances kept by the reduction
-      case_base_size instances left at the end of classification, after
-                     the retention policy has added or forgotten cases
+    Returns (predictions, case_base_size, x_reduced, y_reduced,
+    time_reduction, time_inference). The reduced training set is returned
+    so that the SVM and the Random Forest can be trained on the same one
+    without reducing it a second time.
+
+    The two times are measured apart because they are not the same kind of
+    cost: the reduction is paid once, the classification every time the
+    classifier is used.
 
     Storage as defined in the assignment is
-    100 * reduced_size / len(x_train).
+    100 * len(y_reduced) / len(x_train).
     """
+    start = time.time()
     x_red, y_red = reduce_training_set(x_train, y_train, reduction, distance)
+    time_reduction = time.time() - start
 
+    start = time.time()
     predictions, case_base_size = kNNAlgorithm(
         x_red, y_red, x_test, y_test,
         k=k, distance=distance, voting=voting, retention=retention,
         types=types,
     )
-    return predictions, len(y_red), case_base_size
+    time_inference = time.time() - start
+
+    return (predictions, case_base_size, x_red, y_red,
+            time_reduction, time_inference)
