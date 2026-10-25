@@ -288,4 +288,3 @@ pima-indians DROP3            19.54               7.29            7.50          
              ENNTh            60.29              44.59            1.26            0.13
              FCNN             46.54              25.06            0.03            0.10
 
-Figures written to /home/marcos/Documentos/master/IML/lab/IML-Group5/figures
